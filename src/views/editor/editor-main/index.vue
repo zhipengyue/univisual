@@ -1,0 +1,88 @@
+<template>
+  <div class="editor-main" id="canvas-wp" ref="editorRef">
+    <!-- <align-line /> -->
+    <div
+      class="ruler-container"
+      v-if="render"
+      :style="{ width: sizeInfo.width + 'px', height: sizeInfo.height + 'px' }"
+    >
+      <ruler></ruler>
+    </div>
+    <canvas-main />
+  </div>
+</template>
+<script lang="ts" setup>
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import CanvasMain from './canvas-main/index.vue'
+import AlignLine from './align-line.vue'
+import Ruler from './ruler/index.vue'
+const render = ref<boolean>(true)
+let renderTimeout: any = null
+const editorRef = ref<any>()
+const sizeInfo = ref<any>({
+  width: 0,
+  height: 0
+})
+onMounted(() => {
+  // resize
+  window.addEventListener('resize', resizeHandle)
+  sizeInfo.value = {
+    width: editorRef.value?.clientWidth || 100,
+    height: editorRef.value?.clientHeight || 100
+  }
+})
+onUnmounted(() => {
+  window.removeEventListener('resize', resizeHandle)
+})
+function resizeHandle() {
+  render.value = false
+  if (renderTimeout) {
+    clearTimeout(renderTimeout)
+  }
+  renderTimeout = setTimeout(() => {
+    sizeInfo.value = {
+      width: editorRef.value?.clientWidth || 100,
+      height: editorRef.value?.clientHeight || 100
+    }
+    render.value = true
+  }, 300)
+}
+</script>
+<style lang="scss">
+.editor-main {
+  position: relative;
+  flex-grow: 1;
+  height: 100%;
+  user-select: none;
+  overflow: scroll;
+  background: url('@/assets/images/bg-canvas.png');
+
+  /* 整体滚动条样式 */
+  &::-webkit-scrollbar {
+    width: 3px;
+    height: 2px;
+  }
+
+  /* 滚动条轨道颜色 */
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* 滚动条滑块颜色 */
+  &::-webkit-scrollbar-thumb {
+    background: #434343;
+  }
+
+  &::-webkit-scrollbar-corner {
+    background-color: transparent;
+  }
+
+  .ruler-container {
+    position: fixed;
+    z-index: 1;
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
+  }
+}
+</style>

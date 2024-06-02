@@ -1,0 +1,13 @@
+{
+  "page": {
+    "name": "第一页面",
+    "type": "page",
+    "style": {
+      "width": "100%",
+      "height": "100%",
+      "background": "#fff"
+    },
+    "path": "@/components/web/page.vue",
+    "children": []
+  }
+}
