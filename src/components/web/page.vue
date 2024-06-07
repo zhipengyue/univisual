@@ -1,13 +1,13 @@
 <template>
   <!-- <page-select v-if="useStore.state.playMode == playMode.editor"> -->
-  <div class="page" :style="style">
-    <page-select v-if="useStore.state.playMode == playMode.editor"> </page-select>
+  <div class="page" :style="style" @click="selectThis">
+    <page-select v-if="editStore.state?.select?.instance===instance&&useStore.state.playMode == playMode.editor"> </page-select>
   </div>
   <!-- </page-select> -->
 </template>
 <script lang="ts">
 import pageSelect from '@/components/ui/page-select/index.vue'
-import { toRef, getCurrentInstance } from 'vue'
+import { toRef, ref,getCurrentInstance } from 'vue'
 import BaseContainer from './baseContainer/baseContainer'
 import { usePageStore } from '@/stores/page'
 import { useEditorStore } from '@/stores/editor'
@@ -26,16 +26,26 @@ export default {
     const useStore = usePageStore()
     const editStore = useEditorStore()
     const baseProp = BaseContainer.setup(props)
+    const instance = ref<any>(null)
     if (useStore.state.playMode == playMode.editor) {
-      const instance = getCurrentInstance()
-      editStore.select = {
+      instance.value = getCurrentInstance()
+      editStore.setSelect({
         instance,
         ...baseProp
-      }
+      })
     }
-
+    function selectThis() {
+      console.log('page')
+      editStore.setSelect({
+        instance,
+        ...baseProp
+      })
+    }
     return {
       ...baseProp,
+      editStore,
+      instance,
+      selectThis,
       useStore,
       playMode
     }

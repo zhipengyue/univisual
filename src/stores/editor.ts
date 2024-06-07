@@ -34,12 +34,14 @@ export const useEditorStore = defineStore('editor', () => {
     return state.componentJson[type]
   }
   return {
+    state,
     createMode: state.createMode,
     select: state.select,
     canvas: state.canvas,
     guideLine: state.guideLine,
     alignLine: state.alignLine,
     setSelect: (select: any) => (state.select = select),
+    cancelSelect: () => (state.select = null),
     getComponentJson
   }
 })

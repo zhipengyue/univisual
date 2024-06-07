@@ -1,6 +1,7 @@
 <template>
   <div class="editor-main" id="canvas-wp" ref="editorRef">
     <!-- <align-line /> -->
+    <div class="bg" @click="cancelSelect"></div>
     <div
       class="ruler-container"
       v-if="render"
@@ -16,6 +17,8 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import CanvasMain from './canvas-main/index.vue'
 import AlignLine from './align-line.vue'
 import Ruler from './ruler/index.vue'
+import { useEditorStore } from '@/stores/editor'
+const userStore = useEditorStore()
 const render = ref<boolean>(true)
 let renderTimeout: any = null
 const editorRef = ref<any>()
@@ -47,6 +50,9 @@ function resizeHandle() {
     render.value = true
   }, 300)
 }
+function cancelSelect(){
+  userStore.cancelSelect()
+}
 </script>
 <style lang="scss">
 .editor-main {
@@ -56,7 +62,13 @@ function resizeHandle() {
   user-select: none;
   overflow: scroll;
   background: url('@/assets/images/bg-canvas.png');
-
+  .bg{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
   /* 整体滚动条样式 */
   &::-webkit-scrollbar {
     width: 3px;
