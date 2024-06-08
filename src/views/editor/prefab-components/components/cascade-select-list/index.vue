@@ -28,7 +28,7 @@
           {{ item[props.prop] }}
         </div>
 
-        <div class="operation" :class="[useStore.createMode]">
+        <div class="operation" v-if="useStore.createMode===prefabComponentCreateMode.click" :class="[useStore.createMode]" @click="()=>clickHandle(item)">
           添加
           <el-icon>
             <BottomRight />
@@ -42,6 +42,7 @@
 import { ref, toRef } from 'vue'
 import { BottomRight } from '@element-plus/icons-vue'
 import { useEditorStore } from '@/stores/editor'
+import { prefabComponentCreateMode } from '@/dict/edit'
 import type {
   BaseComponentClassify,
   SecondaryComponentClassify,
@@ -76,6 +77,11 @@ function tabClick(item: BaseComponentClassify, index: number) {
 function secondClick(item: SecondaryComponentClassify, index: number) {
   secondaryIndex.value = index
   componentList.value = item.children
+}
+function clickHandle(item:any){
+  console.log(item)
+  console.log(useStore.state.select)
+  useStore.state.select.addChild(item)
 }
 </script>
 <style lang="scss">

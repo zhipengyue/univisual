@@ -10,7 +10,8 @@ export const prefabComponents: BaseComponentClassify[] = [
           {
             name: 'div',
             label: '<div></div>',
-            category: 'html5'
+            category: 'html5',
+            path: '@/src/components/web/div.vue'
           },
           {
             name: 'nav',

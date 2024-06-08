@@ -3,12 +3,14 @@ export interface HtmlComponent {
   label: string //<div></div>
   category: string // html5
   description?: string
+  path?: string
 }
 export interface ElementComponent {
   name: string // 按钮
   type: string // Elbutton
   category: string // element-plus
   description?: string
+  path?: string
 }
 
 export interface SecondaryComponentClassify {

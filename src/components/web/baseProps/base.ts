@@ -9,6 +9,10 @@ export const baseProps = {
     type: String,
     default: ''
   },
+  uuid: {
+    type: String,
+    default: () => ''
+  },
   className: {
     type: String,
     default: ''

@@ -2,6 +2,8 @@
   <!-- <page-select v-if="useStore.state.playMode == playMode.editor"> -->
   <div class="page" :style="style" @click="selectThis">
     <page-select v-if="editStore.state?.select?.instance===instance&&useStore.state.playMode == playMode.editor"> </page-select>
+    <!-- <div v-for="(item,index) in children" :key="index">{{item.name}}</div> -->
+    <component v-for="(item,index) in children" :key="index" :is="item"/>
   </div>
   <!-- </page-select> -->
 </template>
