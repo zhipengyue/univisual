@@ -37,14 +37,10 @@ watch(
   { deep: true }
 )
 watch(
-  () => pageStore.state.page,
-  (newV) => {
-    const { id, style, type, children, childIds } = pageStore.state.page
-    pageData.value = {
-      id,
-      style,
-      type
-    }
+  () => pageStore.state.pageData,
+  () => {
+    // const { id, style, type, children, childIds } = pageStore.state.pageData
+    pageData.value = pageStore.state.pageData
   },
   { deep: true }
 )

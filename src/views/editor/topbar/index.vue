@@ -17,7 +17,7 @@
 
         <svg-button :height="29.5" :radius="5"> abc </svg-button>
       </div>
-      <div class="title">{{ useStore.page?.name || '' }}</div>
+      <div class="title">{{ useStore?.state?.page?.name || '' }}</div>
       <div class="buttons right"></div>
     </div>
     <head-loading />

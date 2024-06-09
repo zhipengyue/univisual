@@ -32,7 +32,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, toRef, onMounted, type PropType, computed, nextTick } from 'vue'
+import { ref, toRef, onMounted, type PropType, computed, nextTick, watch, getCurrentInstance } from 'vue'
 import { BottomRight } from '@element-plus/icons-vue'
 import { useEditorStore } from '@/stores/editor'
 // import type { BaseComponentClassify, SecondaryComponentClassify, HtmlComponent, ElementComponent } from '@/types/component'
@@ -51,11 +51,20 @@ const props = defineProps({
     default: null
   }
 })
+const instance = getCurrentInstance()
 onMounted(() => {
   // 等待异步
   deepPath.value = [props.rootElement]
   width.value = containerRef.value.offsetWidth
 })
+watch(()=>props.rootElement,()=>{
+  deepPath.value = null
+  deepPath.value = [props.rootElement]
+  nextTick(()=>{
+    instance?.proxy?.$forceUpdate()
+    console.log(instance)
+  })
+},{deep: true}) 
 function selectLayerHandle(item: any) {
   useStore.setSelect(item)
 }

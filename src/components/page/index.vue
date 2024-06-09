@@ -39,7 +39,7 @@ export default {
   name: 'web-page',
   props: {
     ...baseProps,
-    ...containerProps
+    ...containerProps,
   },
   components: {
     pageSelect
@@ -62,7 +62,8 @@ export default {
     })
     const useStore = usePageStore()
     const editStore = useEditorStore()
-    
+    // 设置当前页面
+    useStore.state.page = componentData
     watch(()=>children.value,()=>{
       componentData.children = children.value
     },{deep:true})
