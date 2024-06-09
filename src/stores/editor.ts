@@ -5,7 +5,7 @@ import componentJson from '@/data/component.data.json'
 import { type SelecObject } from '@/types/editor'
 import { getModules } from '@/components/common/methods'
 export const useEditorStore = defineStore('editor', () => {
-  const select = ref<SelecObject>({ instance: null })
+  const select = ref<SelecObject>()
   const state = reactive<any>({
     webModules: getModules(),
     createMode: prefabComponentCreateMode.click,

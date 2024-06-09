@@ -24,6 +24,10 @@ export const baseProps = {
   type: {
     type: String,
     default: () => ''
+  },
+  index: {
+    type: Number,
+    default: () => -1
   }
 }
 

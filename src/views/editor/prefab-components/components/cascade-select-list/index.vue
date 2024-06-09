@@ -84,9 +84,7 @@ function secondClick(item: SecondaryComponentClassify, index: number) {
   componentList.value = item.children
 }
 function clickHandle(item: any) {
-  console.log(item)
-  console.log(useStore.select)
-  useStore.select.addChild(item)
+  useStore.select?.methods?.addChild(item)
 }
 </script>
 <style lang="scss">

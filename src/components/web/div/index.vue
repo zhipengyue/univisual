@@ -25,48 +25,49 @@ import componentJson from '@/data/component.data.json'
 import { type WebComponentName } from '@/types/component'
 import shortid from 'shortid'
 import merge from 'lodash/merge'
+import { emitsList } from '@/components/common/emits'
 export default {
   name: 'web-div',
   props: {
     ...baseProps,
     ...containerProps
   },
-  setup(props) {
+  emits:[...emitsList],
+  setup(props,{emit}) {
+    const children = shallowRef<any[]>([])
+    const childIds = toRef(props, 'childIds')
+    const renderList = shallowRef<any[]>([])
     const componentData = reactive({
       id: props.id,
       name: props.name,
-      childIds: props.childIds,
+      childIds: childIds.value,
+      children: children.value,
       style: props.style,
-      type: props.type
+      type: props.type,
+      methods:{
+        addChild
+      }
     })
     const useStore = usePageStore()
     const editStore = useEditorStore()
-    const instance = ref<any>(null)
-    const children = shallowRef<any[]>([])
-    onMounted(() => {})
+    onMounted(() => {
+      emit('component-data',{
+        index:props.index,
+        componentData
+      })
+    })
     if (useStore.state.playMode == playMode.editor) {
-      instance.value = getCurrentInstance()
-      instance.value['componentData'] = componentData
-      const obj = {
-        instance: instance.value,
-        addChild
-      }
-      editStore.setSelect(obj)
+      editStore.setSelect(componentData)
     }
     const showSelect = computed(() => {
       return (
-        editStore.select?.instance === instance.value && useStore.state.playMode == playMode.editor
+        editStore.select?.id === props.id && useStore.state.playMode == playMode.editor
       )
     })
     function selectThis(event: any) {
       event.stopPropagation()
       event.preventDefault()
-      console.log('------////')
-      const obj = {
-        instance: instance.value,
-        addChild
-      }
-      editStore.setSelect(obj)
+      editStore.setSelect(componentData)
     }
     async function addChild(child: any) {
       const acc: any = {}
@@ -86,10 +87,7 @@ export default {
           component: acc[child.name].default,
           props: objData
         }
-        children.value.push(componentChild)
-        instance.value.proxy.$forceUpdate()
-
-        componentData.childIds.push(objData.id)
+        renderList.value.push(componentChild)
       })
     }
 
@@ -97,7 +95,6 @@ export default {
       showSelect,
       children,
       editStore,
-      instance,
       addChild,
       selectThis,
       useStore,

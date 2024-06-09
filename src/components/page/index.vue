@@ -3,10 +3,12 @@
   <div class="page" @click="selectThis" :style="style">
     <page-select v-if="showSelect"> </page-select>
     <component
-      v-for="(item, index) in children"
+      v-for="(item, index) in renderList"
       :key="index"
+      :index="index"
       :is="item.component"
       v-bind="item.props"
+      @component-data="updateChildDataHandle"
     />
   </div>
   <!-- </page-select> -->
@@ -43,38 +45,38 @@ export default {
     pageSelect
   },
   setup(props) {
+    const instance = getCurrentInstance()
+    const children = shallowRef<any[]>([])
+    const childIds = toRef(props, 'childIds')
+    const renderList = shallowRef<any[]>([])
     const componentData = reactive({
       id: props.id,
       name: props.name,
-      childIds: props.childIds,
+      childIds: childIds.value,
+      children: children.value,
       style: props.style,
-      type: props.type
+      type: props.type,
+      methods:{
+        addChild
+      }
     })
     const useStore = usePageStore()
     const editStore = useEditorStore()
-    const instance = ref<any>(null)
-    const children = shallowRef<any[]>([])
+    
+    watch(()=>children.value,()=>{
+      componentData.children = children.value
+    },{deep:true})
     onMounted(() => {})
     if (useStore.state.playMode == playMode.editor) {
-      instance.value = getCurrentInstance()
-      instance.value['componentData'] = componentData
-      const obj = {
-        instance: instance.value,
-        addChild
-      }
-      editStore.setSelect(obj)
+      editStore.setSelect(componentData)
     }
     const showSelect = computed(() => {
       return (
-        editStore.select?.instance === instance.value && useStore.state.playMode == playMode.editor
+        editStore.select?.id === props.id && useStore.state.playMode == playMode.editor
       )
     })
     function selectThis() {
-      const obj = {
-        instance: instance.value,
-        addChild
-      }
-      editStore.setSelect(obj)
+      editStore.setSelect(componentData)
     }
     // 保存数据时获取JOSN数据
     async function addChild(child: any) {
@@ -95,8 +97,11 @@ export default {
           component: acc[child.name].default,
           props: objData
         }
-        children.value.push(componentChild)
-        instance.value.proxy.$forceUpdate()
+        console.log(componentChild)
+        renderList.value.push(componentChild)
+        // children.value.push(componentChild)
+        
+        instance.proxy.$forceUpdate();
 
         componentData.childIds.push(objData.id)
       })
@@ -105,14 +110,20 @@ export default {
     function getComponentData() {
       return instance.value['componentData']
     }
+    function updateChildDataHandle(data: any) {
+      const {index,componentData} = data
+      children.value[index] = componentData
+    }
     return {
       showSelect,
+      renderList,
       children,
       editStore,
       instance,
       selectThis,
       addChild,
       getComponentData,
+      updateChildDataHandle,
       useStore,
       playMode
     }

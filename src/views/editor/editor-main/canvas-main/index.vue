@@ -9,7 +9,6 @@
       'background-size': `${(1 / canvasStyle.scale) * 16}px ${(1 / canvasStyle.scale) * 16}px`
     }"
   >
-    <!-- <page v-bind="pageStore.page"></page> -->
     <component :is="tempInstance" v-bind="pageData" />
   </div>
 </template>

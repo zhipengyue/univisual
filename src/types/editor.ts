@@ -1,4 +1,11 @@
 export type SelecObject = {
-  instance: any
-  [key: string]: any
+  id: string
+  name: string
+  childIds: string[]
+  children: any[]
+  style: any
+  type: string
+  methods?:{
+    [key:string]: Function
+  }
 }
