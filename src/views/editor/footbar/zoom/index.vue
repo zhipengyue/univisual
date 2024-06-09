@@ -1,7 +1,7 @@
 <template>
   <div class="zoom-container">
-    <el-slider v-model="useStore.canvas.scale" :min="0.2" :max="2" :step="0.1" />
-    <div class="scale-text">scale: {{ useStore.canvas.scale }}</div>
+    <el-slider v-model="useStore.state.canvas.scale" :min="0.2" :max="2" :step="0.1" />
+    <div class="scale-text">scale: {{ useStore.state.canvas.scale }}</div>
   </div>
 </template>
 

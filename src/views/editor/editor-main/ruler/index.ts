@@ -99,9 +99,9 @@ const getLinePos = (el: HTMLElement, options: RulerOption, cx: number, cy: numbe
   const { height, scale, offset } = options
   let dist = 0
   if (options.direction == 'TB') {
-    dist = cx - (el.parentElement?.offsetLeft || 0) - scrollOffset
+    dist = cx - (el.parentElement?.parentElement?.offsetLeft || 0) - scrollOffset
   } else {
-    dist = cy - (el.parentElement?.offsetTop || 0) - scrollOffset
+    dist = cy - (el.parentElement?.parentElement?.offsetTop || 0) - scrollOffset
   }
 
   dist = dist - height + options.indicatorLineWidth
@@ -288,7 +288,8 @@ export class RulerBuilder {
     const { el, options } = this
     const { direction, width, height, ratio } = options
 
-    const deltaW = direction === 'TB' ? Math.max(1920 * 2, width) : Math.max(1080 * 2, width)
+    const deltaW =
+      direction === 'TB' ? Math.max(el.offsetWidth, width) : Math.max(el.offsetHeight, width)
     const deltaH = height
 
     this.ruler.width = deltaW

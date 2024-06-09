@@ -6,22 +6,52 @@
       height: canvasStyle.height + 'px',
       scale: canvasStyle.scale,
       transform: `translate(${canvasStyle.translateX}px ${canvasStyle.translateY}px)`,
-      'background-image': canvasStyle.backgroundImage
+      'background-size': `${(1 / canvasStyle.scale) * 16}px ${(1 / canvasStyle.scale) * 16}px`
     }"
   >
-    <page v-bind="pageStore.page"></page>
+    <!-- <page v-bind="pageStore.page"></page> -->
+    <component :is="tempInstance" v-bind="pageData" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { toRef, onMounted, watch, ref, nextTick } from 'vue'
+import { toRef, onMounted, watch, ref, nextTick, defineAsyncComponent } from 'vue'
 import { useEditorStore } from '@/stores/editor'
 import { usePageStore } from '@/stores/page'
-import page from '@/components/web/page.vue'
 
 const pageStore = usePageStore()
 const useStore = useEditorStore()
-const canvasStyle = toRef(useStore.canvas)
+const canvasStyle = ref<any>({})
+const tempInstance = defineAsyncComponent(() => import('@/components/page/index.vue'))
+// 读取page信息
+// setTimeout(() => {
+//   console.log('-----------')
+//   console.log(useStore.select.instance)
+// }, 5000)
+const pageData = ref<any>({})
+watch(
+  () => useStore.state.canvas,
+  (newV) => {
+    console.log(newV.width)
+    canvasStyle.value = useStore.state.canvas
+  },
+  { deep: true }
+)
+watch(
+  () => pageStore.state.page,
+  (newV) => {
+    const { id, style, type, children, childIds } = pageStore.state.page
+    pageData.value = {
+      id,
+      style,
+      type
+    }
+  },
+  { deep: true }
+)
+onMounted(() => {
+  canvasStyle.value = useStore.state.canvas
+})
 </script>
 <style lang="scss">
 .canvas-main {
@@ -33,6 +63,7 @@ const canvasStyle = toRef(useStore.canvas)
   margin-right: 60px;
   margin-bottom: 60px;
   overflow: hidden;
+  background: url('@/assets/images/bg-canvas-main.jpg') repeat;
   &::after {
     content: '';
     position: absolute;

@@ -4,7 +4,6 @@
     <div class="bg" @click="cancelSelect"></div>
     <div
       class="ruler-container"
-      v-if="render"
       :style="{ width: sizeInfo.width + 'px', height: sizeInfo.height + 'px' }"
     >
       <ruler></ruler>
@@ -13,12 +12,14 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import CanvasMain from './canvas-main/index.vue'
 import AlignLine from './align-line.vue'
 import Ruler from './ruler/index.vue'
 import { useEditorStore } from '@/stores/editor'
+import { useEventStore } from '@/stores/event'
 const userStore = useEditorStore()
+const eventStore = useEventStore()
 const render = ref<boolean>(true)
 let renderTimeout: any = null
 const editorRef = ref<any>()
@@ -29,6 +30,7 @@ const sizeInfo = ref<any>({
 onMounted(() => {
   // resize
   window.addEventListener('resize', resizeHandle)
+  eventStore.addEvent('editor-resize', 'editor-canvas', resizeHandle)
   sizeInfo.value = {
     width: editorRef.value?.clientWidth || 100,
     height: editorRef.value?.clientHeight || 100
@@ -36,6 +38,7 @@ onMounted(() => {
 })
 onUnmounted(() => {
   window.removeEventListener('resize', resizeHandle)
+  eventStore.removeEvent('editor-resize', 'editor-canvas')
 })
 function resizeHandle() {
   render.value = false
@@ -50,7 +53,16 @@ function resizeHandle() {
     render.value = true
   }, 300)
 }
-function cancelSelect(){
+watch(
+  () => sizeInfo.value,
+  (newV) => {
+    console.log(newV.width)
+    userStore.state.canvas.width = newV.width
+    userStore.state.canvas.height = newV.height
+  },
+  { deep: true }
+)
+function cancelSelect() {
   userStore.cancelSelect()
 }
 </script>
@@ -62,7 +74,7 @@ function cancelSelect(){
   user-select: none;
   overflow: scroll;
   background: url('@/assets/images/bg-canvas.png');
-  .bg{
+  .bg {
     position: absolute;
     top: 0;
     left: 0;

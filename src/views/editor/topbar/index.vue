@@ -31,14 +31,22 @@ import svgButton from '@/components/ui/svg-button/index.vue'
 import { IconLayer, IconViewList } from '@/components/icons'
 import { useLayerStore } from '@/stores/layer'
 import { usePrefabStore } from '@/stores/prefab-component'
+import { useEventStore } from '@/stores/event'
 const useStore = usePageStore()
 const layerStore = useLayerStore()
 const prefabStore = usePrefabStore()
+const eventStore = useEventStore()
 const toggleLayer = () => {
   layerStore.show = !layerStore.show
+  setTimeout(() => {
+    eventStore.triggerEvent('editor-resize', null)
+  }, 300)
 }
 const togglePrefab = () => {
   prefabStore.show = !prefabStore.show
+  setTimeout(() => {
+    eventStore.triggerEvent('editor-resize', null)
+  }, 300)
 }
 </script>
 <style lang="scss" scoped>

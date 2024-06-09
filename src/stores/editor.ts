@@ -2,10 +2,14 @@ import { ref, computed, reactive } from 'vue'
 import { defineStore } from 'pinia'
 import { prefabComponentCreateMode } from '@/dict/edit'
 import componentJson from '@/data/component.data.json'
+import { type SelecObject } from '@/types/editor'
+import { getModules } from '@/components/common/methods'
 export const useEditorStore = defineStore('editor', () => {
+  const select = ref<SelecObject>({ instance: null })
   const state = reactive<any>({
+    webModules: getModules(),
     createMode: prefabComponentCreateMode.click,
-    select: null, // 选择的元素
+    // select: null, // 选择的元素
     canvas: {
       scale: 1,
       width: 1920,
@@ -33,15 +37,22 @@ export const useEditorStore = defineStore('editor', () => {
   function getComponentJson(type: string) {
     return state.componentJson[type]
   }
+  function setSelect(_select: any) {
+    select.value = _select
+  }
+  function cancelSelect() {
+    select.value = null
+  }
   return {
     state,
-    createMode: state.createMode,
-    select: state.select,
-    canvas: state.canvas,
-    guideLine: state.guideLine,
-    alignLine: state.alignLine,
-    setSelect: (select: any) => (state.select = select),
-    cancelSelect: () => (state.select = null),
+    select,
+    // createMode: state.createMode,
+    // select: state.select,
+    // canvas: state.canvas,
+    // guideLine: state.guideLine,
+    // alignLine: state.alignLine,
+    setSelect,
+    cancelSelect,
     getComponentJson
   }
 })

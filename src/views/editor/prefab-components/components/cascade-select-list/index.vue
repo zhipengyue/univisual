@@ -28,7 +28,12 @@
           {{ item[props.prop] }}
         </div>
 
-        <div class="operation" v-if="useStore.createMode===prefabComponentCreateMode.click" :class="[useStore.createMode]" @click="()=>clickHandle(item)">
+        <div
+          class="operation"
+          v-if="useStore.state.createMode === prefabComponentCreateMode.click"
+          :class="[useStore.state.createMode]"
+          @click="() => clickHandle(item)"
+        >
           添加
           <el-icon>
             <BottomRight />
@@ -78,10 +83,10 @@ function secondClick(item: SecondaryComponentClassify, index: number) {
   secondaryIndex.value = index
   componentList.value = item.children
 }
-function clickHandle(item:any){
+function clickHandle(item: any) {
   console.log(item)
-  console.log(useStore.state.select)
-  useStore.state.select.addChild(item)
+  console.log(useStore.select)
+  useStore.select.addChild(item)
 }
 </script>
 <style lang="scss">

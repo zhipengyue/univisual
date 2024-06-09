@@ -21,3 +21,8 @@ export interface BaseComponentClassify {
   name: string
   children: SecondaryComponentClassify[]
 }
+
+export type WebComponentName = {
+  'web-div': string
+  'web-page': string
+}

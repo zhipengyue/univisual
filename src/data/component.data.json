@@ -7,7 +7,19 @@
       "height": "100%",
       "background": "#fff"
     },
-    "path": "@/components/web/page.vue",
-    "children": []
+    "path": "@/components/page.vue",
+    "childIds": []
+  },
+  "web-div": {
+    "name": "web-div",
+    "type": "div",
+    "text": "hello - div",
+    "style": {
+      "width": "100px",
+      "height": "100px",
+      "padding": "10px"
+    },
+    "path": "@/components/web/div.vue",
+    "childIds": []
   }
 }

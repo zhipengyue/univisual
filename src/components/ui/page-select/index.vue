@@ -8,7 +8,7 @@
         width="100%"
         height="100%"
         stroke="#fff"
-        stroke-width="3"
+        stroke-width="4"
         fill="transparent"
         stroke-dasharray="3 3"
       ></rect>
@@ -45,16 +45,10 @@ import { ref } from 'vue'
     height: calc(100% - 4px);
 
     rect.dashline1 {
-      transition: all 0.2s ease;
+      transition: all 0.3s ease;
       border-radius: var(--eleven-button-radius);
-      stroke: var(--eleven-layer-item-hover-color);
-      animation: dashAnimation 0.6s linear infinite;
-    }
-    rect.dashline2 {
-      transition: all 0.2s ease;
-      border-radius: var(--eleven-button-radius);
-      stroke: #000;
-      animation: dashAnimation2 0.6s linear infinite;
+      stroke: var(--eleven-button-border-green);
+      animation: dashAnimation 0.2s linear infinite;
     }
   }
 

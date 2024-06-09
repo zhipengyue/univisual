@@ -1,8 +1,15 @@
 <template>
   <div class="canvas-ruler-wp">
-    <div ref="hRulerWpRef" class="ruler-wrapper h-container" :style="`transform: translateX(-${hScroll}px);`"></div>
-    <div ref="vRulerWpRef" class="ruler-wrapper v-container"
-      :style="`transform: rotate(90deg) translateX(-${vScroll}px);`"></div>
+    <div
+      ref="hRulerWpRef"
+      class="ruler-wrapper h-container"
+      :style="`transform: translateX(-${hScroll}px);`"
+    ></div>
+    <div
+      ref="vRulerWpRef"
+      class="ruler-wrapper v-container"
+      :style="`transform: rotate(90deg) translateX(-${vScroll}px);`"
+    ></div>
     <div title="切换参考线" class="ruler-corner" @click="toggleGuides">
       <el-icon v-if="visible">
         <IconLineShow />
@@ -14,7 +21,7 @@
   </div>
 </template>
 
-<script lang='ts'>
+<script lang="ts">
 import { defineComponent, ref, onMounted, onUnmounted, watchEffect } from 'vue'
 import { useEditorStore } from '@/stores/editor'
 import { IconLineShow, IconLineHide } from '@/components/icons'
@@ -24,7 +31,7 @@ export default defineComponent({
   name: 'Ruler',
   components: {
     IconLineShow,
-    IconLineHide,
+    IconLineHide
   },
   setup() {
     const editorStore = useEditorStore()
@@ -40,7 +47,7 @@ export default defineComponent({
 
     watchEffect(() => {
       if (hRulerWpRef.value && vRulerWpRef.value) {
-        const { canvas, guideLine } = editorStore
+        const { canvas, guideLine } = editorStore.state
         const hWidth = Math.max(canvas.width, cw)
         if (hRuler.value) {
           hRuler.value.setSize(hWidth, 20, canvas.scale)
@@ -53,12 +60,12 @@ export default defineComponent({
               if (action === 'add') {
                 guideLine.h.push(nCoor)
               } else if (action === 'update' && nCoor !== oCoor) {
-                guideLine.h = guideLine.h.filter(m => m !== oCoor)
+                guideLine.h = guideLine.h.filter((m) => m !== oCoor)
                 guideLine.h.push(nCoor)
               } else if (action === 'delete') {
-                guideLine.h = guideLine.h.filter(m => m !== nCoor)
+                guideLine.h = guideLine.h.filter((m) => m !== nCoor)
               }
-            },
+            }
           })
 
           hRuler.value.setGuideLines(guideLine.h)
@@ -75,12 +82,12 @@ export default defineComponent({
               if (action === 'add') {
                 guideLine.v.push(nCoor)
               } else if (action === 'update' && nCoor !== oCoor) {
-                guideLine.v = guideLine.v.filter(m => m !== oCoor)
+                guideLine.v = guideLine.v.filter((m) => m !== oCoor)
                 guideLine.v.push(nCoor)
               } else if (action === 'delete') {
-                guideLine.v = guideLine.v.filter(m => m !== nCoor)
+                guideLine.v = guideLine.v.filter((m) => m !== nCoor)
               }
-            },
+            }
           })
 
           vRuler.value.setGuideLines(guideLine.v)
@@ -118,9 +125,9 @@ export default defineComponent({
       vRulerWpRef,
       toggleGuides,
       vScroll,
-      hScroll,
+      hScroll
     }
-  },
+  }
 })
 </script>
 

@@ -26,9 +26,12 @@ const pageStore = usePageStore()
 const route = useRoute()
 // 获取具体参数
 const id: any = route.query.id
-console.log(id)
 
 onMounted(async () => {
+  if (!id) {
+    pageStore.createPage()
+    return
+  }
   const project: any = await projectStore.loadProjectById(id)
   const [firstPageId] = project.pages
   if (firstPageId) {

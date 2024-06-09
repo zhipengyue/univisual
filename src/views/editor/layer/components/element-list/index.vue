@@ -26,7 +26,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, toRef, type PropType } from 'vue'
+import { nextTick, ref, toRef, type PropType } from 'vue'
 import { BottomRight, Right } from '@element-plus/icons-vue'
 import { useEditorStore } from '@/stores/editor'
 import type { Element } from '@/types/element'
@@ -54,10 +54,10 @@ const props = defineProps({
   }
 })
 const element = toRef<Element>(props?.rootElement)
-const elementList = ref<Element[]>([])
-setTimeout(() => {
+const elementList = ref<any>([])
+nextTick(() => {
   elementList.value = element.value?.children
-}, 2000)
+})
 function elementClick(item, _index) {
   elementIndex.value = _index
   emit('select', item)
