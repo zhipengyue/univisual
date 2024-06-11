@@ -41,7 +41,7 @@ export default {
       id: props.id,
       name: props.name,
       childIds: childIds.value,
-      children: children.value,
+      children: children,
       style: props.style,
       type: props.type,
       methods:{
@@ -56,9 +56,11 @@ export default {
         componentData
       })
     })
+    /**添加就被选中
     if (useStore.state.playMode == playMode.editor) {
       editStore.setSelect(componentData)
     }
+    **/
     const showSelect = computed(() => {
       return (
         editStore.select?.id === props.id && useStore.state.playMode == playMode.editor

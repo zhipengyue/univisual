@@ -6,4 +6,5 @@ export interface Element {
   name: string
   className?: string
   children?: Element[]
+  id: string
 }

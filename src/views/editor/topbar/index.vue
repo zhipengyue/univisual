@@ -18,7 +18,23 @@
         <svg-button :height="29.5" :radius="5"> abc </svg-button>
       </div>
       <div class="title">{{ useStore?.state?.page?.name || '' }}</div>
-      <div class="buttons right"></div>
+      <div class="buttons right">
+        <el-dropdown class="dark">
+          <icon-button :width="70">
+            <template #icon>
+              <IconSave />
+            </template>
+            保存
+          </icon-button>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item :icon="Upload" @click="exportHandle">导出</el-dropdown-item>
+              <el-dropdown-item :icon="Download" @click="importHandle">导入</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+
+      </div>
     </div>
     <head-loading />
   </div>
@@ -28,10 +44,12 @@ import headLoading from './head-loading.vue'
 import { usePageStore } from '@/stores/page'
 import iconButton from '@/components/ui/icon-button/index.vue'
 import svgButton from '@/components/ui/svg-button/index.vue'
-import { IconLayer, IconViewList } from '@/components/icons'
+import { IconLayer, IconViewList, IconSave } from '@/components/icons'
 import { useLayerStore } from '@/stores/layer'
 import { usePrefabStore } from '@/stores/prefab-component'
 import { useEventStore } from '@/stores/event'
+import { Upload, Download } from '@element-plus/icons-vue'
+import {exportJson,browseFile} from '@/utils/common'
 const useStore = usePageStore()
 const layerStore = useLayerStore()
 const prefabStore = usePrefabStore()
@@ -47,6 +65,17 @@ const togglePrefab = () => {
   setTimeout(() => {
     eventStore.triggerEvent('editor-resize', null)
   }, 300)
+}
+
+function exportHandle() {
+  const pageJson =useStore.exportJson()
+  exportJson(pageJson,'page.json')
+}
+function importHandle() {
+  browseFile().then((res)=>{
+    console.log(typeof(res))
+    useStore.importJson(res)
+  })
 }
 </script>
 <style lang="scss" scoped>

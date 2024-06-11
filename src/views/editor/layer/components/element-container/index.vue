@@ -20,7 +20,7 @@
       >
         <element-list
           v-for="(element, index) in deepPath"
-          :key="index"
+          :key="element.name"
           :rootElement="element"
           :deep="index"
           :name="'name'"
@@ -58,12 +58,12 @@ onMounted(() => {
   width.value = containerRef.value.offsetWidth
 })
 watch(()=>props.rootElement,()=>{
-  deepPath.value = null
-  deepPath.value = [props.rootElement]
-  nextTick(()=>{
+  deepPath.value = []
+  nextTick(() => {
+    deepPath.value = [props.rootElement]
     instance?.proxy?.$forceUpdate()
-    console.log(instance)
   })
+  
 },{deep: true}) 
 function selectLayerHandle(item: any) {
   useStore.setSelect(item)
@@ -72,7 +72,7 @@ function enterNextLevel(data: any) {
   const { item, deep } = data
 
   deepPath.value.push(item)
-  nextTick(() => {
+  nextTick(() => { 
     movetoCurrentLayer(deep)
   })
 }

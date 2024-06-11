@@ -1,15 +1,20 @@
 <template>
   <div class="element-list">
-    <div class="element-prev header">{{ element?.name }}</div>
+    <div class="element-prev header" @click="elementClick(element, -1)">{{ element?.name }}</div>
     <div class="element-container">
+      <TransitionGroup name="list" tag="div" class="contaienr">
       <div
+        draggable="true"
         class="element"
         v-for="(item, index) in elementList"
-        :key="index"
+        :key="item.id"
         :class="{ active: elementIndex === index }"
         @click="elementClick(item, index)"
+        @dragstart="dragStart(item, index)" 
+        @dragover.prevent 
+        @drop="drop(item, index)"
       >
-        <div class="text">{{ item[props.prop] }}</div>
+        <div class="text">{{ item[props.prop] }}<span class="id">{{item.id }}</span></div>
         <div
           class="button"
           v-if="item?.children && item?.children?.length > 0"
@@ -21,15 +26,17 @@
           </el-icon>
         </div>
       </div>
+      </TransitionGroup>
     </div>
-    <div class="element-prev footer">{{ element?.name }}</div>
+    <div class="element-prev footer" @click="elementClick(element, -1)">{{ element?.name }}</div>
   </div>
 </template>
 <script lang="ts" setup>
-import { nextTick, ref, toRef, type PropType } from 'vue'
+import { nextTick, ref, toRef, watch, type PropType } from 'vue'
 import { BottomRight, Right } from '@element-plus/icons-vue'
 import { useEditorStore } from '@/stores/editor'
 import type { Element } from '@/types/element'
+import { useEventStore } from '@/stores/event'
 import type {
   BaseComponentClassify,
   SecondaryComponentClassify,
@@ -37,6 +44,7 @@ import type {
   ElementComponent
 } from '@/types/component'
 const useStore = useEditorStore()
+const eventStore = useEventStore()
 const elementIndex = ref<number>(-1)
 const emit = defineEmits(['select', 'nextLevel'])
 const props = defineProps({
@@ -55,16 +63,38 @@ const props = defineProps({
 })
 const element = toRef<Element>(props?.rootElement)
 const elementList = ref<any>([])
+
+let draggingItem:any = null;
+let draggingIndex:number = -1;
+  
 nextTick(() => {
   elementList.value = element.value?.children
 })
-function elementClick(item, _index) {
+watch(()=>props.rootElement,()=>{
+  console.log('----')
+  element.value = props.rootElement
+  elementList.value = element.value?.children
+},{deep:true})
+function elementClick(item:any, _index:number) {
   elementIndex.value = _index
   emit('select', item)
 }
 function enterLayerHandle(event: any, item: any) {
   //event.stopPropagation()
   emit('nextLevel', { item, deep: props?.deep })
+}
+function dragStart(item:any, index:number) {
+  draggingItem = item;
+  draggingIndex = index;
+}
+  
+function drop(item:any, targetIndex:number) {
+    const [_item] = elementList.value.splice(draggingIndex,1)
+    elementList.value.splice(targetIndex, 0, _item)
+    eventStore.triggerEvent('component-sort', {
+      id: props.rootElement?.id,
+      children: elementList.value
+    })
 }
 </script>
 <style lang="scss">
@@ -81,6 +111,7 @@ function enterLayerHandle(event: any, item: any) {
     height: 25px;
     line-height: 25px;
     color: var(--eleven-layer-text-disabled-color);
+    user-select: none;
 
     &.header {
       border-bottom: 1px dashed var(--eleven-cascade-border-color1);
@@ -97,6 +128,11 @@ function enterLayerHandle(event: any, item: any) {
     // height: calc(100% - 50px);
     max-height: calc(100vh - 190px); //168px
     overflow-y: scroll;
+    .contaienr{
+      .list-move,.list-enter-active,.list-leave-active{
+        transition: all 0.5s ease;
+      }
+    }
     /* 整体滚动条样式 */
     &::-webkit-scrollbar {
       width: 3px;
@@ -128,7 +164,9 @@ function enterLayerHandle(event: any, item: any) {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    .name{
 
+    }
     .button {
       font-size: var(--eleven-layer-item-select-font-size);
       transition: all 0.2s ease;
@@ -149,7 +187,12 @@ function enterLayerHandle(event: any, item: any) {
       &::after {
         width: 100%;
       }
-
+      &:hover{
+        &::after{
+          background-color: #000;
+          width: 100%;
+        }
+      }
       .button {
         transform: translate(0, 0);
         opacity: 1;
@@ -157,6 +200,11 @@ function enterLayerHandle(event: any, item: any) {
     }
 
     .text {
+      .id{
+        color:rgba(255,255,255,0.2);
+        font-size: 10px;
+        margin-left: 4px;
+      }
     }
 
     &::after {

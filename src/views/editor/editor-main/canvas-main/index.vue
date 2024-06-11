@@ -9,7 +9,7 @@
       'background-size': `${(1 / canvasStyle.scale) * 16}px ${(1 / canvasStyle.scale) * 16}px`
     }"
   >
-    <component :is="tempInstance" v-bind="pageData" />
+    <component :is="tempInstance" v-bind="pageData" :key="pageData.id"/>
   </div>
 </template>
 
@@ -17,9 +17,11 @@
 import { toRef, onMounted, watch, ref, nextTick, defineAsyncComponent } from 'vue'
 import { useEditorStore } from '@/stores/editor'
 import { usePageStore } from '@/stores/page'
+import { useEventStore } from '@/stores/event';
 
 const pageStore = usePageStore()
 const useStore = useEditorStore()
+const eventStore = useEventStore()
 const canvasStyle = ref<any>({})
 const tempInstance = defineAsyncComponent(() => import('@/components/page/index.vue'))
 // 读取page信息
@@ -46,6 +48,9 @@ watch(
 )
 onMounted(() => {
   canvasStyle.value = useStore.state.canvas
+  eventStore.addEvent('page-change','canvas-main',()=>{
+    pageData.value = pageStore.state.page
+  })
 })
 </script>
 <style lang="scss">

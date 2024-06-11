@@ -13,6 +13,10 @@ export const baseProps = {
     type: String,
     default: () => ''
   },
+  parentId: {
+    type: String,
+    default: () => ''
+  },
   text: {
     type: String,
     default: () => ''

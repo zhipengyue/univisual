@@ -21,6 +21,7 @@ import {
   getCurrentInstance,
   watch,
   onMounted,
+  onUnmounted,
   toRef,
   reactive,
   nextTick,
@@ -29,6 +30,7 @@ import {
 import { baseProps, containerProps } from '@/components/common/props'
 import { usePageStore } from '@/stores/page'
 import { useEditorStore } from '@/stores/editor'
+import { useEventStore } from '@/stores/event'
 import { playMode } from '@/dict/play'
 import { getComponetNameByPath, importComponent } from '@/components/common/methods'
 import componentJson from '@/data/component.data.json'
@@ -46,14 +48,14 @@ export default {
   },
   setup(props) {
     const instance = getCurrentInstance()
-    const children = shallowRef<any[]>([])
+    const children = toRef(props, 'children')
     const childIds = toRef(props, 'childIds')
     const renderList = shallowRef<any[]>([])
     const componentData = reactive({
       id: props.id,
       name: props.name,
       childIds: childIds.value,
-      children: children.value,
+      children: children,
       style: props.style,
       type: props.type,
       methods:{
@@ -62,12 +64,55 @@ export default {
     })
     const useStore = usePageStore()
     const editStore = useEditorStore()
+    const eventStore = useEventStore()
     // 设置当前页面
     useStore.state.page = componentData
+    watch(()=>props.id,()=>{
+      componentData.id = props.id
+    })
+    watch(()=>props.name,()=>{
+      componentData.name = props.name
+    })
+    watch(()=>props.children,()=>{
+      componentData.children = props.children
+      componentData.children.forEach((item: any) => {
+        addChild(item)
+      })
+      
+    })
+    watch(()=>props.childIds,()=>{
+      componentData.childIds = props.childIds
+    })
+    watch(()=>props.style,()=>{
+      componentData.style = props.style
+    })
+    watch(()=>props.type,()=>{
+      componentData.type = props.type
+    })
     watch(()=>children.value,()=>{
-      componentData.children = children.value
+      // componentData.children = children.value
+      componentData.childIds = children.value.map((item: any) => {
+        return item.id
+      })
     },{deep:true})
-    onMounted(() => {})
+    onMounted(() => {
+      eventStore.addEvent('component-sort', componentData.id, (data: any) => {
+        if (componentData.id == data.id) {
+          renderList.value = renderList.value.sort((a, b) => {
+            return children.value.findIndex(item=>item.id==a.props.id) - children.value.findIndex(item=>item.id==b.props.id);
+          }); 
+          // console.log(children.value)
+          instance?.proxy?.$forceUpdate();
+        }
+        
+      })
+      componentData.children.forEach((item: any) => {
+        addChild(item)
+      })
+    })
+    onUnmounted(() => {
+      eventStore.removeEvent('component-sort', componentData.id)
+    })
     if (useStore.state.playMode == playMode.editor) {
       editStore.setSelect(componentData)
     }
@@ -92,13 +137,13 @@ export default {
       nextTick(() => {
         const objData: any = merge({
           id: shortid.generate(),
+          parentId: componentData.id,
           ...componentJson[child.name]
         })
         const componentChild = {
           component: acc[child.name].default,
           props: objData
         }
-        console.log(componentChild)
         renderList.value.push(componentChild)
         // children.value.push(componentChild)
         
@@ -112,9 +157,11 @@ export default {
       return instance.value['componentData']
     }
     function updateChildDataHandle(data: any) {
-      const {index,componentData} = data
-      children.value[index] = componentData
+      const {index} = data
+      data.componentData['parentId'] = componentData.id,
+      children.value[index] = data.componentData
     }
+
     return {
       showSelect,
       renderList,
