@@ -132,7 +132,7 @@ export default {
       for (let i = 0; i < pathList.length; i++) {
         const path = pathList[i]
         const componentName: string = getComponetNameByPath(path)
-        acc[componentName] = await importComponent(path)
+        acc[componentName] = await import(`${path}`)
       }
       nextTick(() => {
         const objData: any = merge({

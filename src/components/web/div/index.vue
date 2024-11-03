@@ -1,5 +1,5 @@
 <template>
-  <div class="web-div" :style="style" @click="selectThis">
+  <div class="web-div" :style="componentData?.style" @click="selectThis">
     {{ text }}
     <page-select v-if="showSelect"> </page-select>
   </div>
@@ -61,6 +61,9 @@ export default {
       editStore.setSelect(componentData)
     }
     **/
+   watch(()=>componentData,(newV)=>{
+      console.log(newV)
+   },{deep:true})
     const showSelect = computed(() => {
       return (
         editStore.select?.id === props.id && useStore.state.playMode == playMode.editor
@@ -78,7 +81,7 @@ export default {
       for (let i = 0; i < pathList.length; i++) {
         const path = pathList[i]
         const componentName: string = getComponetNameByPath(path)
-        acc[componentName] = await importComponent(path)
+        acc[componentName] = await import(`${path}`)
       }
       nextTick(() => {
         const objData: any = merge({
@@ -100,7 +103,8 @@ export default {
       addChild,
       selectThis,
       useStore,
-      playMode
+      playMode,
+      componentData
     }
   }
 }

@@ -19,7 +19,7 @@
       </div>
       <div class="title">{{ useStore?.state?.page?.name || '' }}</div>
       <div class="buttons right">
-        <el-dropdown class="dark">
+        <el-dropdown class="dark" effect="dark">
           <icon-button :width="70">
             <template #icon>
               <IconSave />

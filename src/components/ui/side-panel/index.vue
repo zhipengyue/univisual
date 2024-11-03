@@ -9,7 +9,7 @@
     }"
   >
     <div class="inner" :style="{ width: props.width + 'px' }">
-      <div class="top-bar">
+      <div class="top-bar" v-if="!props.hideTopBar">
         <div class="title">{{ props.title }}</div>
         <div class="buttons" title="收起">
           <el-icon @click="$emit('close')">
@@ -50,6 +50,10 @@ const props = defineProps({
   show: {
     type: Boolean,
     default: true
+  },
+  hideTopBar: {
+    type: Boolean,
+    default: false
   }
 })
 </script>

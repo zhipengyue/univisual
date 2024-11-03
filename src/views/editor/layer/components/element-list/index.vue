@@ -8,7 +8,7 @@
         class="element"
         v-for="(item, index) in elementList"
         :key="item.id"
-        :class="{ active: elementIndex === index }"
+        :class="{ active: useStore.select?.id === item.id }"
         @click="elementClick(item, index)"
         @dragstart="dragStart(item, index)" 
         @dragover.prevent 
@@ -45,7 +45,6 @@ import type {
 } from '@/types/component'
 const useStore = useEditorStore()
 const eventStore = useEventStore()
-const elementIndex = ref<number>(-1)
 const emit = defineEmits(['select', 'nextLevel'])
 const props = defineProps({
   prop: {
@@ -70,13 +69,15 @@ let draggingIndex:number = -1;
 nextTick(() => {
   elementList.value = element.value?.children
 })
+watch(()=>useStore.select,()=>{
+
+},{deep:true})
 watch(()=>props.rootElement,()=>{
   console.log('----')
   element.value = props.rootElement
   elementList.value = element.value?.children
 },{deep:true})
 function elementClick(item:any, _index:number) {
-  elementIndex.value = _index
   emit('select', item)
 }
 function enterLayerHandle(event: any, item: any) {
